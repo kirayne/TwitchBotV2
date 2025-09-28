@@ -5,6 +5,7 @@ tags - tags like badges, username, user info pretty much
 args - is an array with words AFTER the command
 */
 const { roll, resetFreeRoll, giveRoll } = require("../database/db");
+const { ballResponse } = require("./8ball.js")
 module.exports = {
   /*
   checks if the user has rolled {
@@ -163,7 +164,12 @@ module.exports = {
       }
     },
   },
+  "8ball": {
+    description: "Returns a set of answers",
+    async execute(bot, channel, tags, args){
+      return await bot.say(channel, ballResponse())
+    }
+  }
 };
 
-// ADD !8BALL
 // ADD !ROLLS
