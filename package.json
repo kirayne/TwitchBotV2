@@ -13,5 +13,8 @@
     "sqlite3": "^5.1.7",
     "tmi": "^2.0.0",
     "tmi.js": "^1.8.5"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0"
   }
 }

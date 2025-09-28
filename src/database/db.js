@@ -21,6 +21,12 @@ async function init() {
       hasRolled INTEGER DEFAULT 0
     )
   `);
+
+  /*
+ await db.run(`
+    DELETE FROM viewers WHERE id = 786607104;
+`);
+*/
 }
 
 // receives the ID and returns the viewer row
@@ -36,6 +42,30 @@ async function getViewerByUsername(username) {
     `SELECT * FROM viewers WHERE LOWER(username) = LOWER(?) LIMIT 1`,
     [username]
   );
+}
+
+// receives the ID and returns 0 or 1
+async function hasRolled(id) {
+  const db = await dbPromise;
+  try {
+    return db.get(`SELECT hasRolled FROM viewers WHERE id = ?`, [id]);
+  } catch (err) {
+    console.log(err, "user not in DB");
+  }
+}
+
+// Returns the number of rolls avaiable
+async function avaiableRolls(id) {
+  const db = await dbPromise;
+  try {
+    return db.get(`SELECT bits FROM viewers WHERE id = ?`, [id]);
+  } catch (err) {}
+}
+
+// Amount of times a viewer has rolled
+async function totalRolls(id) {
+  const db = await dbPromise;
+  return;
 }
 
 // triggered when someone cheers, rolls,
@@ -150,4 +180,7 @@ module.exports = {
   roll,
   giveRoll,
   getViewerByUsername,
+  hasRolled,
+  rollCost,
+  avaiableRolls,
 };

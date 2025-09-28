@@ -4,8 +4,18 @@ channel - channel the message is being sent
 tags - tags like badges, username, user info pretty much
 args - is an array with words AFTER the command
 */
-const { roll, resetFreeRoll, giveRoll } = require("../database/db");
-const { ballResponse } = require("./8ball.js")
+const {
+  roll,
+  resetFreeRoll,
+  giveRoll,
+  getViewerById,
+  insertUser,
+  hasRolled,
+  rollCost,
+  avaiableRolls,
+} = require("../database/db");
+const { ballResponse } = require("./8ball.js");
+
 module.exports = {
   /*
   checks if the user has rolled {
@@ -166,10 +176,57 @@ module.exports = {
   },
   "8ball": {
     description: "Returns a set of answers",
-    async execute(bot, channel, tags, args){
-      return await bot.say(channel, ballResponse())
-    }
-  }
+    async execute(bot, channel, tags, args) {
+      return await bot.say(channel, ballResponse());
+    },
+  },
+  rolls: {
+    description: "Checks amount of rolls left",
+    async execute(bot, channel, tags, args) {
+      // Check if user is in DB
+      // If user not in DB -> adds to DB
+      // returns amount of rolls
+      try {
+        const isUserInDB = await getViewerById(tags["user-id"]);
+        if (!isUserInDB) {
+          insertUser(tags["user-id"], tags.username, 0, 0, 0); // bits = 0, hasRolled = false, totalRolls = 0
+          console.log(`${tags.username} added to the database`);
+          return await bot.say(
+            channel,
+            `@${tags.username} you have a single roll, pathetic.`
+          );
+        }
+        const isRolled = await hasRolled(tags["user-id"]); // {hasRolled: <bool>}
+        let numberOfRolls = await avaiableRolls(tags["user-id"]); // {bits: <bits>}
+        numberOfRolls = Math.floor(numberOfRolls?.bits / rollCost); // rolls = bits/rollCost
+
+        // console.log(isRolled?.hasRolled) -> 0 or 1
+        // If hasRolled === 0 -> rolls = bits/rollCost + 1
+        if (isRolled?.hasRolled === 0) {
+          // Havent rolled
+          numberOfRolls = 1 + numberOfRolls;
+          return bot.say(
+            channel,
+            `@${tags.username} you have ${numberOfRolls} roll(s) left`
+          );
+        }
+        if (numberOfRolls < 1) {
+          return bot.say(
+            channel,
+            `@${tags.username} you have no rolls do you want more? Just cheer 100 bits ez lmao(JOKE DONT SPEND)`
+          );
+        }
+        // If no bits or hasrolled === 1 -> return numberOfRolls
+        return bot.say(
+          channel,
+          `@${tags.username} you have ${numberOfRolls} roll(s) left`
+        );
+      } catch (err) {
+        console.error("giveRoll (command) failed:", err);
+        await bot.say(channel, `natsu broke something, classic `);
+      }
+    },
+  },
 };
 
 // ADD !ROLLS
