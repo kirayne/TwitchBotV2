@@ -237,9 +237,9 @@ module.exports = {
         let viewer = await getViewerById(tags["user-id"]);
         // Adds viewer to DB
         if (!viewer) {
-          await insertUser(tags["user-id"], tags.username, 0, 0, 0); // bits = 0, hasrolled = false, totalRolls = 0
+          viewer = await insertUser(tags["user-id"], tags.username, 0, 0, 0); // bits = 0, hasrolled = false, totalRolls = 0
           console.log(`${tags.username} added to the database`);
-          viewer = await getViewerById(tags["user-id"]);
+          console.log(viewer);
         }
         console.log(viewer.totalRolls);
         let total = viewer.totalRolls;

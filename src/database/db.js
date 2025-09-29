@@ -22,11 +22,9 @@ async function init() {
     )
   `);
 
-
- await db.run(`
+  await db.run(`
     DELETE FROM viewers WHERE id = 786607104;
 `);
-
 }
 
 // receives the ID and returns the viewer row
@@ -62,7 +60,6 @@ async function avaiableRolls(id) {
   } catch (err) {}
 }
 
-
 // triggered when someone cheers, rolls,
 async function insertUser(id, username, bits, hasRolled, totalRolls) {
   const db = await dbPromise;
@@ -71,6 +68,7 @@ async function insertUser(id, username, bits, hasRolled, totalRolls) {
      VALUES (?, ?, ?, ?, ?)`,
     [id, username, totalRolls, bits, hasRolled]
   );
+  return db.get(`SELECT * FROM viewers WHERE id = ?`, [id]);
 }
 
 // triggered when someone cheers
@@ -178,5 +176,4 @@ module.exports = {
   hasRolled,
   rollCost,
   avaiableRolls,
-
 };
