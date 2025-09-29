@@ -22,11 +22,11 @@ async function init() {
     )
   `);
 
-  /*
+
  await db.run(`
     DELETE FROM viewers WHERE id = 786607104;
 `);
-*/
+
 }
 
 // receives the ID and returns the viewer row
@@ -62,11 +62,6 @@ async function avaiableRolls(id) {
   } catch (err) {}
 }
 
-// Amount of times a viewer has rolled
-async function totalRolls(id) {
-  const db = await dbPromise;
-  return;
-}
 
 // triggered when someone cheers, rolls,
 async function insertUser(id, username, bits, hasRolled, totalRolls) {
@@ -183,4 +178,5 @@ module.exports = {
   hasRolled,
   rollCost,
   avaiableRolls,
+
 };

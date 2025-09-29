@@ -26,6 +26,7 @@ module.exports = {
     roll()
     removes bits from database
     }
+  
   */
   roll: {
     description: "rolls a number",
@@ -187,8 +188,8 @@ module.exports = {
       // If user not in DB -> adds to DB
       // returns amount of rolls
       try {
-        const isUserInDB = await getViewerById(tags["user-id"]);
-        if (!isUserInDB) {
+        const viewer = await getViewerById(tags["user-id"]);
+        if (!viewer) {
           insertUser(tags["user-id"], tags.username, 0, 0, 0); // bits = 0, hasRolled = false, totalRolls = 0
           console.log(`${tags.username} added to the database`);
           return await bot.say(
@@ -196,30 +197,32 @@ module.exports = {
             `@${tags.username} you have a single roll, pathetic.`
           );
         }
-        const isRolled = await hasRolled(tags["user-id"]); // {hasRolled: <bool>}
-        let numberOfRolls = await avaiableRolls(tags["user-id"]); // {bits: <bits>}
-        numberOfRolls = Math.floor(numberOfRolls?.bits / rollCost); // rolls = bits/rollCost
+        const isRolled = await hasRolled(tags["user-id"]); // {hasRolled: <bool>}  is rolled is a variable that check if hasrolled = true
+        let numberOfRollsAvaiable = await avaiableRolls(tags["user-id"]); // {bits: <bits>}
+        numberOfRollsAvaiable = Math.floor(
+          numberOfRollsAvaiable?.bits / rollCost
+        ); // rolls = bits/rollCost
 
         // console.log(isRolled?.hasRolled) -> 0 or 1
         // If hasRolled === 0 -> rolls = bits/rollCost + 1
         if (isRolled?.hasRolled === 0) {
           // Havent rolled
-          numberOfRolls = 1 + numberOfRolls;
+          numberOfRollsAvaiable = 1 + numberOfRollsAvaiable;
           return bot.say(
             channel,
-            `@${tags.username} you have ${numberOfRolls} roll(s) left`
+            `@${tags.username} you have ${numberOfRollsAvaiable} roll(s) left`
           );
         }
-        if (numberOfRolls < 1) {
+        if (numberOfRollsAvaiable < 1) {
           return bot.say(
             channel,
             `@${tags.username} you have no rolls do you want more? Just cheer 100 bits ez lmao(JOKE DONT SPEND)`
           );
         }
-        // If no bits or hasrolled === 1 -> return numberOfRolls
+        // If no bits or hasrolled === 1 -> return numberOfRollsAvaiable
         return bot.say(
           channel,
-          `@${tags.username} you have ${numberOfRolls} roll(s) left`
+          `@${tags.username} you have ${numberOfRollsAvaiable} roll(s) left`
         );
       } catch (err) {
         console.error("giveRoll (command) failed:", err);
@@ -227,6 +230,39 @@ module.exports = {
       }
     },
   },
+  myrolls: {
+    description: "Checks amount of times you have rolled",
+    async execute(bot, channel, tags, args) {
+      try {
+        let viewer = await getViewerById(tags["user-id"]);
+        // Adds viewer to DB
+        if (!viewer) {
+          await insertUser(tags["user-id"], tags.username, 0, 0, 0); // bits = 0, hasrolled = false, totalRolls = 0
+          console.log(`${tags.username} added to the database`);
+          viewer = await getViewerById(tags["user-id"]);
+        }
+        console.log(viewer.totalRolls);
+        let total = viewer.totalRolls;
+        console.log(total);
+        if (total === 0) {
+          return await bot.say(
+            channel,
+            `@${tags.username} you never rolled and you wanna see your rolls? how about you use !roll first??  GamesWhen`
+          );
+        }
+        return await bot.say(
+          channel,
+          `@${tags.username} you have rolled ${total} times`
+        );
+      } catch (err) {
+        await bot.say(
+          channel,
+          `Tbh I dont even know what would make an error fall inside this catch but I need to say something so here I am saying something`
+        );
+        console.log(err);
+      }
+    },
+  },
 };
 
-// ADD !ROLLS
+// ADD !totalrolls
