@@ -61,11 +61,11 @@ async function avaiableRolls(id) {
 }
 
 // triggered when someone cheers, rolls,
-async function insertUser(id, username, bits, hasRolled, totalRolls) {
+async function insertViewer(id, username, bits, hasRolled, totalRolls) {
   const db = await dbPromise;
   await db.run(
     `INSERT INTO viewers (id, username, totalRolls, bits, hasRolled)
-     VALUES (?, ?, ?, ?, ?)`,
+    VALUES (?, ?, ?, ?, ?)`,
     [id, username, totalRolls, bits, hasRolled]
   );
   return db.get(`SELECT * FROM viewers WHERE id = ?`, [id]);
@@ -77,7 +77,7 @@ async function addBits(id, username, bitsToAdd) {
   const row = await getViewerById(id);
 
   if (!row) {
-    return insertUser(id, username, bitsToAdd, 0, 0);
+    return insertViewer(id, username, bitsToAdd, 0, 0);
   }
 
   await db.run(
@@ -95,7 +95,7 @@ async function roll(id, username) {
   const row = await getViewerById(id);
 
   if (!row) {
-    await insertUser(id, username, 0, 1, 0);
+    await insertViewer(id, username, 0, 1, 0);
     console.log("User:", username, "added to the database");
     return randomRoll(id, rollRange);
   }
@@ -168,7 +168,7 @@ module.exports = {
   init,
   resetFreeRoll,
   getViewerById,
-  insertUser,
+  insertViewer,
   addBits,
   roll,
   giveRoll,

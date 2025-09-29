@@ -9,7 +9,7 @@ const {
   resetFreeRoll,
   giveRoll,
   getViewerById,
-  insertUser,
+  insertViewer,
   hasRolled,
   rollCost,
   avaiableRolls,
@@ -190,7 +190,7 @@ module.exports = {
       try {
         const viewer = await getViewerById(tags["user-id"]);
         if (!viewer) {
-          insertUser(tags["user-id"], tags.username, 0, 0, 0); // bits = 0, hasRolled = false, totalRolls = 0
+          insertViewer(tags["user-id"], tags.username, 0, 0, 0); // bits = 0, hasRolled = false, totalRolls = 0
           console.log(`${tags.username} added to the database`);
           return await bot.say(
             channel,
@@ -237,11 +237,10 @@ module.exports = {
         let viewer = await getViewerById(tags["user-id"]);
         // Adds viewer to DB
         if (!viewer) {
-          viewer = await insertUser(tags["user-id"], tags.username, 0, 0, 0); // bits = 0, hasrolled = false, totalRolls = 0
+          viewer = await insertViewer(tags["user-id"], tags.username, 0, 0, 0); // bits = 0, hasrolled = false, totalRolls = 0
           console.log(`${tags.username} added to the database`);
           console.log(viewer);
         }
-        console.log(viewer.totalRolls);
         let total = viewer.totalRolls;
         console.log(total);
         if (total === 0) {

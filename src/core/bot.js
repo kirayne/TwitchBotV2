@@ -24,7 +24,7 @@ init().catch((err) => {
 });
 
 bot.on("connected", () => {
-  bot.say("natsu30fps", "aaaaaa");
+  bot.say("natsu30fps", "aaaa");
 });
 
 bot.on("message", async (channel, tags, message, self) => {
