@@ -1,5 +1,6 @@
 const path = require("path");
 const tmi = require("tmi.js");
+const linkify = require("linkifyjs");
 require("dotenv").config({ path: path.resolve(__dirname, "../../env/.env") });
 const commands = require("../interactions/commands");
 const { addBits, init, logViewerChat } = require("../database/db");
@@ -36,15 +37,16 @@ bot.on("message", async (channel, tags, message, self) => {
 
     if (commands[commandName]) {
       try {
-        await commands[commandName].execute(bot, channel, tags, args);
+        return await commands[commandName].execute(bot, channel, tags, args);
       } catch (err) {
         console.error(`Error executing command ${commandName}:`, err);
       }
     }
   }
 
-  // mensagem que vai ser inserida no markov
+  // Messages to feed to markov db
   try {
+    if (containsURL(message)) return;
     await logViewerChat(tags["user-id"], tags.username, message);
   } catch (err) {
     console.log("Error inserting viewer message into db", err);
@@ -63,3 +65,7 @@ bot.on("cheer", async (channel, tags, message, self) => {
     }
   }
 });
+
+function containsURL(message) {
+  return linkify.find(message).some((msg) => msg.isLink);
+}

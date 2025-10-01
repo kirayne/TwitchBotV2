@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "dotenv": "^17.2.2",
+    "linkifyjs": "^4.3.2",
     "promised-sqlite3": "^2.1.0",
     "sqlite-async": "^1.2.2",
     "sqlite3": "^5.1.7",
