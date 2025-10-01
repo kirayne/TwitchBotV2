@@ -12,7 +12,7 @@ const bot = new tmi.Client({
     username: process.env.BOT_ID,
     password: process.env.TWITCH_OAUTH,
   },
-  channels: ["natsu30fps"],
+  channels: ["natsubun"],
 });
 
 bot.connect().catch((err) => {
@@ -24,22 +24,30 @@ init().catch((err) => {
 });
 
 bot.on("connected", () => {
-  bot.say("natsu30fps", "aaaa");
+  bot.say("natsubun", "aaaa");
 });
 
+// checks for commands
 bot.on("message", async (channel, tags, message, self) => {
   if (self) return;
-  if (!message.startsWith(prefix)) return;
+  if (message.startsWith(prefix)) {
+    const args = message.slice(1).split(" ");
+    const commandName = args.shift().toLowerCase();
 
-  const args = message.slice(1).split(" ");
-  const commandName = args.shift().toLowerCase();
-
-  if (commands[commandName]) {
-    try {
-      await commands[commandName].execute(bot, channel, tags, args);
-    } catch (err) {
-      console.error(`Error executing command ${commandName}:`, err);
+    if (commands[commandName]) {
+      try {
+        await commands[commandName].execute(bot, channel, tags, args);
+      } catch (err) {
+        console.error(`Error executing command ${commandName}:`, err);
+      }
     }
+  }
+
+  // mensagem que vai ser inserida no markov
+  try {
+    await insertMarkov({});
+  } catch (err) {
+    console.log("Error inserting viewer message into db");
   }
 });
 

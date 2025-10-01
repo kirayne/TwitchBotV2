@@ -230,7 +230,7 @@ module.exports = {
       }
     },
   },
-  myrolls: {
+  totalrolls: {
     description: "Checks amount of times you have rolled",
     async execute(bot, channel, tags, args) {
       try {
@@ -263,5 +263,3 @@ module.exports = {
     },
   },
 };
-
-// ADD !totalrolls

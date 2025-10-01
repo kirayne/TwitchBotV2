@@ -22,6 +22,17 @@ async function init() {
     )
   `);
 
+  // fazer as funcoes de insert
+
+  await db.run(`CREATE TABLE IF NOT EXISTS viewerChat(
+  id       INTEGER PRIMARY KEY,
+  user_id  TEXT NOT NULL,
+  username TEXT NOT NULL,
+  message  TEXT NOT NULL,
+  ts       INTEGER NOT NULL
+);
+`);
+
   await db.run(`
     DELETE FROM viewers WHERE id = 786607104;
 `);
@@ -41,7 +52,6 @@ async function getViewerByUsername(username) {
     [username]
   );
 }
-
 // receives the ID and returns 0 or 1
 async function hasRolled(id) {
   const db = await dbPromise;
@@ -51,7 +61,6 @@ async function hasRolled(id) {
     console.log(err, "user not in DB");
   }
 }
-
 // Returns the number of rolls avaiable
 async function avaiableRolls(id) {
   const db = await dbPromise;
@@ -59,7 +68,6 @@ async function avaiableRolls(id) {
     return db.get(`SELECT bits FROM viewers WHERE id = ?`, [id]);
   } catch (err) {}
 }
-
 // triggered when someone cheers, rolls,
 async function insertViewer(id, username, bits, hasRolled, totalRolls) {
   const db = await dbPromise;
