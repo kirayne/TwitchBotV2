@@ -2,7 +2,7 @@ const path = require("path");
 const tmi = require("tmi.js");
 require("dotenv").config({ path: path.resolve(__dirname, "../../env/.env") });
 const commands = require("../interactions/commands");
-const { addBits, init } = require("../database/db");
+const { addBits, init, logViewerChat } = require("../database/db");
 
 const prefix = "!";
 
@@ -12,7 +12,7 @@ const bot = new tmi.Client({
     username: process.env.BOT_ID,
     password: process.env.TWITCH_OAUTH,
   },
-  channels: ["natsubun"],
+  channels: ["natsu30fps"],
 });
 
 bot.connect().catch((err) => {
@@ -24,7 +24,7 @@ init().catch((err) => {
 });
 
 bot.on("connected", () => {
-  bot.say("natsubun", "aaaa");
+  bot.say("natsu30fps", "aaaa");
 });
 
 // checks for commands
@@ -45,9 +45,9 @@ bot.on("message", async (channel, tags, message, self) => {
 
   // mensagem que vai ser inserida no markov
   try {
-    await insertMarkov({});
+    await logViewerChat(tags["user-id"], tags.username, message);
   } catch (err) {
-    console.log("Error inserting viewer message into db");
+    console.log("Error inserting viewer message into db", err);
   }
 });
 

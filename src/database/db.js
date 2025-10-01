@@ -22,8 +22,6 @@ async function init() {
     )
   `);
 
-  // fazer as funcoes de insert
-
   await db.run(`CREATE TABLE IF NOT EXISTS viewerChat(
   id       INTEGER PRIMARY KEY,
   user_id  TEXT NOT NULL,
@@ -172,6 +170,17 @@ async function resetFreeRoll() {
   );
 }
 
+// Markov stuff
+
+// Logs chat messages
+async function logViewerChat(userid, username, message) {
+  const db = await dbPromise;
+  return await db.run(
+    `INSERT INTO viewerChat(user_id, username, message, ts)values (?, ?, ?, ?)`,
+    [userid, username, message, Date.now()]
+  );
+}
+
 module.exports = {
   init,
   resetFreeRoll,
@@ -184,4 +193,5 @@ module.exports = {
   hasRolled,
   rollCost,
   avaiableRolls,
+  logViewerChat,
 };
